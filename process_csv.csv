@@ -1,0 +1,17 @@
+Name,SMILES,pKa_25,canonical_SMILES,has_nitrogen
+Aminopyrine,CN(C)C1=C(C)N(C)N(C1=O)C1=CC=CC=C1,4,Cc1c(N(C)C)c(=O)n(-c2ccccc2)n1C,True
+Amoxicillin,CC1(C)SC2C(NC(=O)C(N)c3ccc(O)cc3)C(=O)N2C1C(O)=O,4,CC1(C)SC2C(NC(=O)C(N)c3ccc(O)cc3)C(=O)N2C1C(=O)O,True
+Ampicillin,CC1(C)SC2C(NC(=O)C(N)c3ccccc3)C(=O)N2C1C(O)=O,4,CC1(C)SC2C(NC(=O)C(N)c3ccccc3)C(=O)N2C1C(=O)O,True
+Antipyrine,CN1N(C(=O)C=C1C)c2ccccc2,4,Cc1cc(=O)n(-c2ccccc2)n1C,True
+Atenolol,CC(C)NCC(O)COc1ccc(CC(N)=O)cc1,1,CC(C)NCC(O)COc1ccc(CC(N)=O)cc1,True
+Betahistine,CNCCc1ccccn1,4,CNCCc1ccccn1,True
+Butaperazine,CCCC(=O)c1ccc2Sc3ccccc3N(CCCN4CCN(C)CC4)c2c1,4,CCCC(=O)c1ccc2c(c1)N(CCCN1CCN(C)CC1)c1ccccc1S2,True
+Carbamazepine,NC(=O)N1c2ccccc2C=Cc3ccccc13,1,NC(=O)N1c2ccccc2C=Cc2ccccc21,True
+Carbidopa,CC(Cc1ccc(O)c(O)c1)(NN)C(O)=O,1,CC(Cc1ccc(O)c(O)c1)(NN)C(=O)O,True
+Carvedilol,COC1=CC=CC=C1OCCNCC(O)COC1=CC=CC2=C1C1=CC=CC=C1N2,4,COc1ccccc1OCCNCC(O)COc1cccc2[nH]c3ccccc3c12,True
+Chloramphenicol,OCC(NC(=O)C(Cl)Cl)C(O)c1ccc(cc1)N(=O)=O,1,O=C(NC(CO)C(O)c1ccc([N+](=O)[O-])cc1)C(Cl)Cl,True
+Chloroquine,CCN(CC)CCCC(C)Nc1ccnc2cc(Cl)ccc12,1,CCN(CC)CCCC(C)Nc1ccnc2cc(Cl)ccc12,True
+Chlorpromazine,CN(C)CCCN1c2ccccc2Sc3ccc(Cl)cc13,4,CN(C)CCCN1c2ccccc2Sc2ccc(Cl)cc21,True
+Chlortetracycline,CN(C)C1C2CC3C(=C(O)C2(O)C(=O)C(C(N)=O)=C1O)C(=O)c4c(O)ccc(Cl)c4C3(C)O,3,CN(C)C1C(O)=C(C(N)=O)C(=O)C2(O)C(O)=C3C(=O)c4c(O)ccc(Cl)c4C(C)(O)C3CC12,True
+Clemizole,Clc1ccc(C[n]2c(CN3CCCC3)nc4ccccc42)cc1,4,Clc1ccc(Cn2c(CN3CCCC3)nc3ccccc32)cc1,True
+Clonidine,Clc1cccc(Cl)c1NC2NCCN=2,4,Clc1cccc(Cl)c1NC1=NCCN1,True

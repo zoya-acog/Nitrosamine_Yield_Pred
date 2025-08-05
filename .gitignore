@@ -1,0 +1,51 @@
+# Byte-compiled / cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Python virtual environment
+nitro/
+
+# Jupyter notebook checkpoints and runtime files
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+jupyter-*.json
+**.ipynb_checkpoints/
+
+# Personal trash & system-cleanup dirs
+Trash/
+*.Trash-*/     # catch variants like .Trash-1000
+
+# Qodo extension folder
+**.qodo/
+qodo-extension/  # or whatever the exact name is
+
+
+# Docker stuff (ignore image build caches, local volumes, envs)
+docker-compose.override.yml
+docker-compose.*.yml
+docker-compose.*.env
+**/data/
+**/tmp/
+**/work/
+
+# IDE/editor configs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs and local machine files
+*.log
+*.sqlite3
+*.db
+.DS_Store
+rule_based_pipeline.log
+
+# datasets
+datasets/
+images/
+
+# Next.js frontend
+frontend/node_modules/
+frontend/.next/

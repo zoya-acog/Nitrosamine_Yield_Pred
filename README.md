@@ -1,0 +1,1 @@
+python cli.py gat -i test_inf.csv -m os_duplicate_model.pt -o data

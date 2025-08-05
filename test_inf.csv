@@ -1,0 +1,6 @@
+Name,SMILES,pKa_25
+Antipyrine,CN1N(C(=O)C=C1C)c2ccccc2,NaN
+Entacapone,CCN(CC)C(=O)C(=Cc1cc(O)c(O)c(c1)N(=O)=O)C#N,NaN
+Hydrochlorothiazide,NS(=O)(=O)c1cc2c(NCNS2(=O)=O)cc1Cl,NaN
+Pramipexole,CCCNC1CCc2nc(N)[s]c2C1,NaN
+Prolylglycine,OC(=O)CNC(=O)C1CCCN1,NaN
