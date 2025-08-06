@@ -1,0 +1,3 @@
+Name,SMILES,pKa_25,canonical_SMILES,has_nitrogen,Atom_ID,Type_of_nitrogen,Nitrosated_SMILES
+Aminopyrine,CN(C)C1=C(C)N(C)N(C1=O)C1=CC=CC=C1,5.0,Cc1c(N(C)C)c(=O)n(-c2ccccc2)n1C,True,8,Tertiary,Cc1c(N(C)C)c(=O)n(N=O)n1C
+Aminopyrine,CN(C)C1=C(C)N(C)N(C1=O)C1=CC=CC=C1,5.0,Cc1c(N(C)C)c(=O)n(-c2ccccc2)n1C,True,15,Tertiary,Cc1c(N(C)C)c(=O)n(-c2ccccc2)n1N=O

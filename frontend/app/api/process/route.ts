@@ -1,91 +1,3 @@
-// import { type NextRequest, NextResponse } from "next/server";
-// import { exec } from "child_process";
-// import { writeFile, readFile, unlink, mkdir } from "fs/promises";
-// import { tmpdir } from "os";
-// import { join } from "path";
-
-// export async function POST(request: NextRequest) {
-//   try {
-//     const formData = await request.formData();
-//     const file = formData.get("file") as File;
-//     const model = formData.get("model") as string;
-
-//     if (!file || !model) {
-//       return NextResponse.json({ error: "File and model are required" }, { status: 400 });
-//     }
-
-//     // 1. Save the uploaded file to a temporary location
-//     const tempDir = join(tmpdir(), "nitrosamine-yield-pred");
-//     await mkdir(tempDir, { recursive: true });
-//     const tempFilePath = join(tempDir, file.name);
-//     const outputDir = join(tempDir, "output");
-//     await mkdir(outputDir, { recursive: true });
-
-//     const fileBuffer = Buffer.from(await file.arrayBuffer());
-//     await writeFile(tempFilePath, fileBuffer);
-
-//     // 2. Execute the script based on the selected model
-//     let command: string;
-//     let outputFilePath: string;
-
-//     if (model === "rule-based") {
-//       outputFilePath = join(outputDir, "new_with_atom_id.csv");
-//       command = `/home/zoya/Nitrosamine_Yield_Pred/nitro/bin/python /home/zoya/Nitrosamine_Yield_Pred/cli.py rule -i ${tempFilePath} -o ${outputDir}`;
-//     } else if (model === "gat") {
-//       outputFilePath = join(outputDir, "gat_predictions.csv");
-//       command = `/home/zoya/Nitrosamine_Yield_Pred/nitro/bin/python /home/zoya/Nitrosamine_Yield_Pred/cli.py gat -i ${tempFilePath} -m /home/zoya/Nitrosamine_Yield_Pred/os_duplicate_model.pt -o ${outputDir}`;
-//     } else {
-//       // Clean up temp file on error
-//       await unlink(tempFilePath).catch(console.error);
-//       return NextResponse.json({ error: "Invalid model selected" }, { status: 400 });
-//     }
-
-//     console.log(`Executing command: ${command}`);
-//     await new Promise<void>((resolve, reject) => {
-//       exec(command, (error, stdout, stderr) => {
-//         if (error) {
-//           console.error(`exec error: ${error}`);
-//           console.error(`Script stdout: ${stdout}`);
-//           console.error(`Script stderr: ${stderr}`);
-//           // Clean up temp file on error
-//           unlink(tempFilePath).catch(console.error);
-//           reject(new Error(`Script execution failed: ${stderr}`));
-//           return;
-//         }
-//         console.log(`Script stdout: ${stdout}`);
-//         console.error(`Script stderr: ${stderr}`);
-//         resolve();
-//       });
-//     });
-
-//     // 3. Read the output
-//     const resultCsv = await readFile(outputFilePath, "utf-8");
-
-//     // 4. Cleanup temporary files
-//     await unlink(tempFilePath);
-//     await unlink(outputFilePath);
-
-
-//     // Parse CSV to JSON
-//     const lines = resultCsv.trim().split("\n");
-//     const headers = lines[0].split(",").map((h) => h.trim());
-//     const data = lines.slice(1).map((line) => {
-//       const values = line.split(",").map((v) => v.trim());
-//       const row: Record<string, string> = {};
-//       headers.forEach((header, index) => {
-//         row[header] = values[index] ?? "";
-//       });
-//       return row;
-//     });
-
-//     return NextResponse.json({ success: true, data });
-//   } catch (error: any) {
-//     console.error("Processing error:", error);
-//     return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });
-//   }
-// }
-
-
 import { type NextRequest, NextResponse } from "next/server";
 import { exec } from "child_process";
 import { writeFile, readFile, unlink, mkdir } from "fs/promises";
@@ -118,7 +30,7 @@ export async function POST(request: NextRequest) {
 
     if (model === "rule-based") {
       outputFilePath = join(outputDir, "new_with_atom_id.csv");
-      command = `/home/zoya/Nitrosamine_Yield_Pred/nitro/bin/python /home/zoya/Nitrosamine_Yield_Pred/cli.py rule -i ${tempFilePath} -o ${outputDir}`;
+      command = `/home/zoya/Nitrosamine_Yield_Pred/nitro/bin/python /home/zoya/Nitrosamine_Yield_Pred/cli.py rule -i ${tempFilePath} -o ${outputDir} --visualize`;
     } else if (model === "gat") {
       outputFilePath = join(outputDir, "gat_predictions.csv");
       command = `/home/zoya/Nitrosamine_Yield_Pred/nitro/bin/python /home/zoya/Nitrosamine_Yield_Pred/cli.py gat -i ${tempFilePath} -m /home/zoya/Nitrosamine_Yield_Pred/os_duplicate_model.pt -o ${outputDir}`;

@@ -1,3 +1,4 @@
+
 import argparse
 import os
 import sys
@@ -46,7 +47,7 @@ def validate_input_file(input_file, model_type):
         if model_type == "rule":
             required_columns = ["Name", "SMILES", "pKa_25"]
         elif model_type == "gat":
-            required_columns = ["Name", "SMILES"] # GAT only needs Name and SMILES
+            required_columns = ["Name", "SMILES"]
         else:
             logger.error(f"Unknown model type: {model_type}")
             sys.exit(1)
@@ -146,14 +147,19 @@ def run_pipeline(input_file, output_dir, steps, visualize):
             sys.exit(1)
 
     # Optional: Visualize Denitrosated Atoms
+    base64_svgs = []
     if visualize and ("all" in steps or "denitrosation" in steps):
+        if not denitrosated_csv.exists():
+            logger.error(f"Required file {denitrosated_csv} not found for visualization")
+            sys.exit(1)
         logger.info("-" * 50)
         logger.info("Visualizing Denitrosated Atoms")
         try:
-            visualize_denitrosated_atoms(denitrosated_csv, output_path)
+            base64_svgs = visualize_denitrosated_atoms(denitrosated_csv, output_path)
             logger.info(f"Denitrosated atom visualizations saved in {output_path}")
         except Exception as e:
             logger.error(f"Error in visualize_denitrosated: {e}")
+            sys.exit(1)
 
     # Step 5: Apply Rule-Based Logic
     if "all" in steps or "rule_based" in steps:
@@ -163,8 +169,19 @@ def run_pipeline(input_file, output_dir, steps, visualize):
         logger.info("-" * 50)
         logger.info("Running Step 5: Rule-Based Logic")
         try:
-            apply_rule_based_logic(denitrosated_csv, final_csv)
+            output_df = apply_rule_based_logic(denitrosated_csv, final_csv)
             logger.info(f"Final output CSV saved to {final_csv}")
+            
+            # Add base64 SVGs to final CSV
+            if base64_svgs:
+                # Ensure base64_svgs length matches DataFrame
+                if len(base64_svgs) < len(output_df):
+                    base64_svgs.extend([None] * (len(output_df) - len(base64_svgs)))
+                elif len(base64_svgs) > len(output_df):
+                    base64_svgs = base64_svgs[:len(output_df)]
+                output_df['Base64_SVG'] = base64_svgs
+                output_df.to_csv(final_csv, index=False)
+                logger.info(f"Updated {final_csv} with Base64_SVG column")
         except Exception as e:
             logger.error(f"Error in rule_based_logic: {e}")
             sys.exit(1)
