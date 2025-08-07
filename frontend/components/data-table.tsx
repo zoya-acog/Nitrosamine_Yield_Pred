@@ -21,7 +21,8 @@ import { Button } from "@/components/ui/button"
 ModuleRegistry.registerModules([ AllCommunityModule ]);
 
 interface DataTableProps {
-  data: any[]
+  data: any[];
+  resultType?: 'rule-based' | 'ml-based' | 'default';
 }
 
 // Image Modal Component
@@ -66,7 +67,7 @@ function ImageModal({ isOpen, imageSrc, onClose }: ImageModalProps) {
   );
 }
 
-export function DataTable({ data }: DataTableProps) {
+export function DataTable({ data, resultType = 'default' }: DataTableProps) {
   const gridRef = useRef<AgGridReact>(null)
   const [gridApi, setGridApi] = useState<GridApi | null>(null)
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>({})
@@ -75,18 +76,35 @@ export function DataTable({ data }: DataTableProps) {
 
   useEffect(() => {
     if (data && data.length > 0) {
-      console.log(`DataTable received ${data.length} rows`);
-      console.log('Sample Structure:', data[0].Structure?.slice(0, 50) || 'No Structure');
-      console.log('Sample Base64_SVG:', data[0].Base64_SVG?.slice(0, 50) || 'No Base64_SVG');
-      console.log('Rows with Structure:', data.filter(row => row.Structure).length);
-      console.log('Rows with Base64_SVG:', data.filter(row => row.Base64_SVG).length);
-      const initialVisibility = Object.keys(data[0]).reduce((acc, key) => {
-        acc[key] = true;
-        return acc;
-      }, {} as Record<string, boolean>);
+      const allKeys = Object.keys(data[0]);
+      let initialVisibility: Record<string, boolean>;
+
+      if (resultType === 'rule-based') {
+        const defaultVisibleKeys = [
+          'name',
+          'recovered smiles (reactant smiles)',
+          '2d structure',
+          'score',
+          'likelihood',
+          'structure',
+          'base64_svg',
+        ];
+        
+        initialVisibility = allKeys.reduce((acc, key) => {
+          const lowerKey = key.toLowerCase().replace(/_/g, ' ');
+          acc[key] = defaultVisibleKeys.some(defaultKey => defaultKey.includes(lowerKey));
+          return acc;
+        }, {} as Record<string, boolean>);
+
+      } else {
+        initialVisibility = allKeys.reduce((acc, key) => {
+          acc[key] = true;
+          return acc;
+        }, {} as Record<string, boolean>);
+      }
       setColumnVisibility(initialVisibility);
     }
-  }, [data]);
+  }, [data, resultType]);
 
   const handleImageClick = (imageSrc: string) => {
     setModalImage(imageSrc);
@@ -131,6 +149,8 @@ export function DataTable({ data }: DataTableProps) {
         resizable: true,
         minWidth: 100,
         hide: !columnVisibility[key],
+        tooltipField: key,
+        headerTooltip: "Drag to resize column",
       }
 
       if (key.includes("_gt_") || key.includes("_lt_")) {
@@ -142,7 +162,7 @@ export function DataTable({ data }: DataTableProps) {
         colDef.headerName = key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
       }
 
-      if (key.toLowerCase() === 'structure' || key.toLowerCase() === 'base64_svg') {
+      if (key.toLowerCase() === 'structure' || key.toLowerCase() === 'base64_svg' || key.toLowerCase() === '2d structure') {
         colDef.cellRenderer = EnhancedHtmlCellRenderer;
         colDef.autoHeight = true;
         colDef.minWidth = 200;
@@ -312,6 +332,10 @@ export function DataTable({ data }: DataTableProps) {
           border-right: 1px solid #e2e8f0; /* Vertical line for cells */
           display: flex;
           align-items: center;
+          /* Enable ellipsis for overflowing text */
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
 
         .ag-theme-alpine-custom .ag-row:hover {

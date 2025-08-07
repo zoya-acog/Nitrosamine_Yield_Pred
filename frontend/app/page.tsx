@@ -185,7 +185,7 @@ export default function ChemicalPipelinePage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Upload className="h-5 w-5" />
-                  Input Configuration
+                  Input
                 </CardTitle>
                 <CardDescription>Upload your CSV file and select the processing model</CardDescription>
               </CardHeader>
@@ -193,7 +193,7 @@ export default function ChemicalPipelinePage() {
                 <Tabs defaultValue="file-upload" className="w-full">
                   <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="single-smiles">Single SMILES</TabsTrigger>
-                    <TabsTrigger value="file-upload">File Upload</TabsTrigger>
+                    <TabsTrigger value="file-upload">File upload</TabsTrigger>
                   </TabsList>
 
                   <TabsContent value="single-smiles" className="space-y-4">
@@ -212,7 +212,7 @@ export default function ChemicalPipelinePage() {
                 </Tabs>
 
                 <div>
-                  <Label htmlFor="model">Select Model</Label>
+                  <Label htmlFor="model">Select model</Label>
                   <Select value={selectedModel} onValueChange={setSelectedModel}>
                     <SelectTrigger className="mt-1">
                       <SelectValue placeholder="Choose processing model" />
@@ -259,12 +259,12 @@ export default function ChemicalPipelinePage() {
                 {results && (
                   <Button onClick={downloadResults} variant="outline" className="w-full bg-transparent">
                     <Download className="h-4 w-4 mr-2" />
-                    Download Results
+                    Download results
                   </Button>
                 )}
 
                 {/* Debug section - remove this in production */}
-                {process.env.NODE_ENV === 'development' && debugInfo}
+                {/* {process.env.NODE_ENV === 'development' && debugInfo} */}
               </CardContent>
             </Card>
           </div>
@@ -282,7 +282,7 @@ export default function ChemicalPipelinePage() {
               </CardHeader>
               <CardContent className="min-h-[600px]">
                 {results && Array.isArray(results) && results.length > 0 ? (
-                  <DataTable data={results} />
+                  <DataTable data={results} resultType={selectedModel as 'rule-based' | 'ml-based' | 'default'} />
                 ) : (
                   <div className="flex items-center justify-center h-64 text-gray-500">
                     <div className="text-center">
