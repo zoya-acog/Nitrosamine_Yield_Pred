@@ -597,7 +597,7 @@ export function ResultsTable({ data }: ResultsTableProps) {
     if (data) {
       const { headers } = parseCsv(data);
       const initialVisibility = headers.reduce((acc, key) => {
-        acc[key] = ['Name', 'Recovered SMILES (reactant SMILES)', '2D structure', 'Score', 'Likelihood'].includes(key);
+        acc[key] = true;
         return acc;
       }, {} as Record<string, boolean>);
       setColumnVisibility(initialVisibility);

@@ -586,7 +586,7 @@ def predict_and_visualize(input_csv, model_path, output_csv=None, save_html_path
         return "<br>".join([
             f"N-{row.N_Atom_Index} : " +
             (f"True={label_class(row.True_Label)}, " if 'True_Label' in row else "") +
-            f"Pred={label_class(row.Pred_Label)}, P={row.Pred_Prob * 100:.2f}%"
+            f"Pred={label_class(row.Pred_Label)}, P={row.Pred_Prob * 100:.0f}%"
             for _, row in subdf.iterrows()
         ])
 

@@ -108,7 +108,11 @@ export function FileUpload({ onFileUpload }: FileUploadProps) {
               <p className="text-sm font-medium text-gray-700">
                 {dragActive ? "Drop the CSV file here" : "Click to upload or drag CSV file"}
               </p>
-              <p className="text-xs text-gray-500">Supports CSV files with Name, SMILES, and pKa_25 columns</p>
+              <p className="text-xs text-gray-500 text-center leading-snug mt-2">
+  For <span className="font-semibold">Knowledge-based model</span>: <code>Name</code>, <code>SMILES</code>, <code>pKa at 25 °C</code><br />
+  For <span className="font-semibold">GAT model</span>: <code>Name</code>, <code>SMILES</code>
+</p>
+
             </>
           )}
         </div>

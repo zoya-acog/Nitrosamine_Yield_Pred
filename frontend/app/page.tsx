@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge"
 import { DataTable } from "@/components/data-table"
 // import { ResultsTable } from "@/components/ResultsTable"
 
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { FileUpload } from "@/components/file-upload"
 import Header from "@/components/header"
 import Papa from "papaparse"
@@ -187,13 +188,12 @@ export default function ChemicalPipelinePage() {
                   <Upload className="h-5 w-5" />
                   Input
                 </CardTitle>
-                <CardDescription>Upload your CSV file and select the processing model</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <Tabs defaultValue="file-upload" className="w-full">
                   <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="single-smiles">Single SMILES</TabsTrigger>
-                    <TabsTrigger value="file-upload">File upload</TabsTrigger>
+                    <TabsTrigger value="file-upload">Multiple SMILES</TabsTrigger>
                   </TabsList>
 
                   <TabsContent value="single-smiles" className="space-y-4">
@@ -212,15 +212,30 @@ export default function ChemicalPipelinePage() {
                 </Tabs>
 
                 <div>
-                  <Label htmlFor="model">Select model</Label>
+                  <div className="flex items-center gap-2 mb-1">
+                  <Label htmlFor="model">Select method</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button variant="outline" className="p-1 h-auto rounded-full">
+                            <Info className="h-3 w-3" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom" className="w-64 p-2 text-center">
+                          <p><b>Knowledge based approach:</b> rules are designed from experimental outcomes gives likelihood score of nitrosamination for given Nitrogen center</p>
+                          <p><b>GAT model:</b> Graph Attention Network based ML model trained over experimental data</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                   <Select value={selectedModel} onValueChange={setSelectedModel}>
                     <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Choose processing model" />
+                      <SelectValue placeholder="Choose processing method" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="rule-based">
                         <div className="flex items-center gap-2">
-                          Rule-based                         
+                          Knowledge-based                         
                         </div>
                       </SelectItem>
                       <SelectItem value="gat">
@@ -251,20 +266,10 @@ export default function ChemicalPipelinePage() {
                   ) : (
                     <>
                       <Play className="h-4 w-4 mr-2" />
-                      Process
+                      Submit
                     </>
                   )}
                 </Button>
-
-                {results && (
-                  <Button onClick={downloadResults} variant="outline" className="w-full bg-transparent">
-                    <Download className="h-4 w-4 mr-2" />
-                    Download results
-                  </Button>
-                )}
-
-                {/* Debug section - remove this in production */}
-                {/* {process.env.NODE_ENV === 'development' && debugInfo} */}
               </CardContent>
             </Card>
           </div>
@@ -274,15 +279,10 @@ export default function ChemicalPipelinePage() {
             <Card className="h-fit">
               <CardHeader>
                 <CardTitle>Results</CardTitle>
-                {/* <CardDescription>
-                  {results
-                    ? `Showing ${results.length} processed compounds`
-                    : "Results will appear here after processing"}
-                </CardDescription> */}
               </CardHeader>
               <CardContent className="min-h-[600px]">
                 {results && Array.isArray(results) && results.length > 0 ? (
-                  <DataTable data={results} resultType={selectedModel as 'rule-based' | 'ml-based' | 'default'} />
+                  <DataTable data={results} resultType={selectedModel as 'rule-based' | 'gat' } />
                 ) : (
                   <div className="flex items-center justify-center h-64 text-gray-500">
                     <div className="text-center">
