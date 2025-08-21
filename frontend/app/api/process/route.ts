@@ -1,7 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { exec } from "child_process";
 import { writeFile, readFile, unlink, mkdir } from "fs/promises";
-import { tmpdir } from "os";
 import { join } from "path";
 
 export async function POST(request: NextRequest) {
@@ -14,12 +13,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "File and model are required" }, { status: 400 });
     }
 
-    // 1. Save the uploaded file to a temporary location
-    const tempDir = join(tmpdir(), "nitrosamine-yield-pred");
-    await mkdir(tempDir, { recursive: true });
-    const tempFilePath = join(tempDir, file.name);
-    const outputDir = join(tempDir, "output");
+    // 1. Save the uploaded file to a fixed location in /app
+    const projectRoot = "/app";
+    const outputDir = join(projectRoot, "output");
     await mkdir(outputDir, { recursive: true });
+    const tempFilePath = join(outputDir, file.name);
 
     const fileBuffer = Buffer.from(await file.arrayBuffer());
     await writeFile(tempFilePath, fileBuffer);
@@ -27,27 +25,26 @@ export async function POST(request: NextRequest) {
     // 2. Execute the script based on the selected model
     let command: string;
     let outputFilePath: string;
+    const pythonBin = "/app/venv/bin/python"; // Use virtual environment's Python
 
     if (model === "rule-based") {
       outputFilePath = join(outputDir, "new_with_atom_id.csv");
-      command = `/home/zoya/Nitrosamine_Yield_Pred/nitro/bin/python /home/zoya/Nitrosamine_Yield_Pred/cli.py rule -i ${tempFilePath} -o ${outputDir} --visualize`;
+      command = `${pythonBin} ${join(projectRoot, "cli.py")} rule -i ${tempFilePath} -o ${outputDir} --visualize`;
     } else if (model === "gat") {
       outputFilePath = join(outputDir, "gat_predictions.csv");
-      command = `/home/zoya/Nitrosamine_Yield_Pred/nitro/bin/python /home/zoya/Nitrosamine_Yield_Pred/cli.py gat -i ${tempFilePath} -m /home/zoya/Nitrosamine_Yield_Pred/os_duplicate_model.pt -o ${outputDir}`;
+      command = `${pythonBin} ${join(projectRoot, "cli.py")} gat -i ${tempFilePath} -m ${join(projectRoot, "os_duplicate_model.pt")} -o ${outputDir}`;
     } else {
-      // Clean up temp file on error
       await unlink(tempFilePath).catch(console.error);
       return NextResponse.json({ error: "Invalid model selected" }, { status: 400 });
     }
 
     console.log(`Executing command: ${command}`);
     await new Promise<void>((resolve, reject) => {
-      exec(command, (error, stdout, stderr) => {
+      exec(command, { cwd: projectRoot }, (error, stdout, stderr) => {
         if (error) {
           console.error(`exec error: ${error}`);
           console.error(`Script stdout: ${stdout}`);
           console.error(`Script stderr: ${stderr}`);
-          // Clean up temp file on error
           unlink(tempFilePath).catch(console.error);
           reject(new Error(`Script execution failed: ${stderr}`));
           return;
@@ -65,7 +62,7 @@ export async function POST(request: NextRequest) {
     await unlink(tempFilePath);
     await unlink(outputFilePath);
 
-    // Parse CSV to JSON using proper CSV parsing
+    // Parse CSV to JSON
     const data = parseCsv(resultCsv);
 
     console.log(`Parsed ${data.length} rows from CSV`);
@@ -78,7 +75,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Proper CSV parsing function that handles quoted fields and escaped commas
+// CSV parsing functions (unchanged)
 function parseCsv(csvText: string): Record<string, string>[] {
   const lines = csvText.trim().split('\n');
   if (lines.length === 0) return [];
@@ -89,18 +86,15 @@ function parseCsv(csvText: string): Record<string, string>[] {
   for (let i = 1; i < lines.length; i++) {
     const values = parseCSVLine(lines[i]);
     const row: Record<string, string> = {};
-    
     headers.forEach((header, index) => {
       row[header] = values[index] ?? "";
     });
-    
     data.push(row);
   }
 
   return data;
 }
 
-// Parse a single CSV line handling quoted fields
 function parseCSVLine(line: string): string[] {
   const result: string[] = [];
   let current = '';
@@ -109,19 +103,15 @@ function parseCSVLine(line: string): string[] {
 
   while (i < line.length) {
     const char = line[i];
-
     if (char === '"') {
       if (inQuotes && line[i + 1] === '"') {
-        // Escaped quote
         current += '"';
         i += 2;
       } else {
-        // Toggle quote state
         inQuotes = !inQuotes;
         i++;
       }
     } else if (char === ',' && !inQuotes) {
-      // Field separator
       result.push(current.trim());
       current = '';
       i++;
@@ -130,9 +120,6 @@ function parseCSVLine(line: string): string[] {
       i++;
     }
   }
-
-  // Add the last field
   result.push(current.trim());
-
   return result;
 }
